@@ -1,6 +1,6 @@
 ## This repository holds a conan recipe for libwebsockets.
 
-[![Download](https://api.bintray.com/packages/bincrafters/public-conan/libwebsockets%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/libwebsockets%3Abincrafters/_latestVersion)
+[![Bintray Download](https://api.bintray.com/packages/bincrafters/public-conan/libwesockets%3Abincrafters/images/download.svg?version=2.4.0%3Astable) ](https://bintray.com/bincrafters/public-conan/libwesockets%3Abincrafters/2.4.0%3Astable/link)
 [![Travis Build Status](https://travis-ci.org/bincrafters/conan-libwebsockets.svg?branch=stable%2F2.4.0)](https://travis-ci.org/bincrafters/conan-libwebsockets)
 [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/g8ni02142dt3uo2b?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-libwebsockets)
 [![License LGPL](https://img.shields.io/badge/license-LGPL%202.1-yellow.svg)](https://shields.io/)
