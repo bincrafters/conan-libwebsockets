@@ -70,31 +70,19 @@ int main( int argc, char *argv[] )
 
 	struct lws_context *context = lws_create_context( &info );
 
-	time_t old = 0;
-
-	struct timeval tv;
-	gettimeofday( &tv, NULL );
-
 	/* Connect if we are not connected to the server. */
-	if( !web_socket && tv.tv_sec != old )
-	{
-		struct lws_client_connect_info ccinfo = {0};
-		ccinfo.context = context;
-		ccinfo.address = "localhost";
-		ccinfo.port = 8000;
-		ccinfo.path = "/";
-		ccinfo.host = lws_canonical_hostname( context );
-		ccinfo.origin = "origin";
-		ccinfo.protocol = protocols[PROTOCOL_EXAMPLE].name;
-		web_socket = lws_client_connect_via_info(&ccinfo);
-	}
+	struct lws_client_connect_info ccinfo = {0};
+	ccinfo.context = context;
+	ccinfo.address = "localhost";
+	ccinfo.port = 8000;
+	ccinfo.path = "/";
+	ccinfo.host = lws_canonical_hostname( context );
+	ccinfo.origin = "origin";
+	ccinfo.protocol = protocols[PROTOCOL_EXAMPLE].name;
+	web_socket = lws_client_connect_via_info(&ccinfo);
 
-	if( tv.tv_sec != old )
-	{
-		/* Send a random number to the server every second. */
-		lws_callback_on_writable( web_socket );
-		old = tv.tv_sec;
-	}
+	/* Send a random number to the server every second. */
+	lws_callback_on_writable( web_socket );
 
 	lws_service( context, /* timeout_ms = */ 250 );
 
