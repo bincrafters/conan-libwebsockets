@@ -8,8 +8,8 @@ class LibwebsocketsConan(ConanFile):
     version = "2.4.0"
     settings = "os", "arch", "compiler", "build_type"
     generators = "cmake"
-    options = {"shared": [True, False], "lws_with_ssl": [True, False]}
-    default_options = "shared=True", "lws_with_ssl=True"
+    options = {"shared": [True, False], "lws_with_ssl": [True, False], "lws_with_libuv": [True, False], "lws_with_libevent": [True, False]}
+    default_options = "shared=True", "lws_with_ssl=True", "lws_with_libuv=True", "lws_with_libevent=True"
     url = "https://github.com/bincrafters/conan-libwebsockets"
     description = "Canonical libwebsockets.org websocket library"
     license = "https://github.com/warmcat/libwebsockets/blob/master/LICENSE"
@@ -24,6 +24,13 @@ class LibwebsocketsConan(ConanFile):
     def requirements(self):
         if self.options.lws_with_ssl:
             self.requires.add("OpenSSL/1.0.2l@conan/stable")
+            self.options["OpenSSL"].shared = self.options.shared
+        if self.options.lws_with_libuv:
+            self.requires.add("libuv/1.15.0@%s/stable" % self.user)
+            self.options["libuv"].shared = self.options.shared
+        if self.options.lws_with_libevent:
+            self.requires.add("libevent/2.1.8@%s/stable" % self.user)
+            self.options["libevent"].shared = self.options.shared
 
     def source(self):
         source_url = "https://github.com/warmcat/libwebsockets"
@@ -34,6 +41,9 @@ class LibwebsocketsConan(ConanFile):
         cmake.definitions["LWS_WITHOUT_TESTAPPS"] = True
         cmake.definitions["LWS_WITH_SHARED"] = self.options.shared
         cmake.definitions["LWS_WITH_STATIC"] = not self.options.shared
+        cmake.definitions["LWS_WITH_SSL"] = self.options.lws_with_ssl
+        cmake.definitions["LWS_WITH_LIBUV"] = self.options.lws_with_libuv
+        cmake.definitions["LWS_WITH_LIBEVENT"] = self.options.lws_with_libevent
         cmake.definitions["CMAKE_INSTALL_PREFIX"] = self.install_dir
         cmake.configure()
         cmake.build()
