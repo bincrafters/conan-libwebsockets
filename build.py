@@ -1,4 +1,6 @@
+import copy
 from conan.packager import ConanMultiPackager, os, re
+from conans import tools
 
 
 def get_name_version_from_recipe():
@@ -40,4 +42,13 @@ if __name__ == "__main__":
     builder = ConanMultiPackager(username=username, channel=channel, reference=reference, upload=upload,
                                  upload_only_when_stable=True, stable_branch_pattern="stable/*")
     builder.add_common_builds(shared_option_name="%s:shared" % name)
+
+    if not tools.os_info.is_windows:
+        new_builds = copy.deepcopy(builder.builds)
+        for settings, options, env_vars, build_requires in new_builds:
+            options["%s:lws_with_libuv" % name] = True
+            options["%s:lws_with_libevent" % name] = True
+
+        builder.builds.extend(new_builds)
+
     builder.run()
