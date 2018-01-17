@@ -1,7 +1,6 @@
-cmake_minimum_required(VERSION 2.8)
-project(conan-libwebsockets)
+project(cmake_wrapper)
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+include(conanbuildinfo.cmake)
 conan_basic_setup()
 
-add_subdirectory("libwebsockets-2.4.0")
+add_subdirectory("source_subfolder")
