@@ -22,16 +22,10 @@ class LibwebsocketsConan(ConanFile):
         "lws_with_zlib": [True, False],
         "lws_with_ssl": [True, False]
     }
-    default_options = (
-        "shared=True", 
-        "lws_with_libuv=False", 
-        "lws_with_libevent=False",
-        "lws_with_zlib=False",
-        "lws_with_ssl=False"
-    )
+    default_options = {'shared': True, 'lws_with_libuv': False, 'lws_with_libevent': False, 'lws_with_zlib': False, 'lws_with_ssl': False}
         
-    source_subfolder = "source_subfolder"
-    build_subfolder = "build_subfolder"
+    _source_subfolder = "source_subfolder"
+    _build_subfolder = "build_subfolder"
 
     def configure(self):
         del self.settings.compiler.libcxx
@@ -50,7 +44,7 @@ class LibwebsocketsConan(ConanFile):
         source_url = "https://github.com/warmcat/libwebsockets"
         tools.get("{0}/archive/v{1}.tar.gz".format(source_url, self.version))
         extracted_dir = self.name + "-" + self.version
-        os.rename(extracted_dir, self.source_subfolder)
+        os.rename(extracted_dir, self._source_subfolder)
 
     def build(self):
         cmake = CMake(self)
@@ -68,12 +62,12 @@ class LibwebsocketsConan(ConanFile):
         # zlib is required for extensions
 
         cmake.definitions["CMAKE_INSTALL_PREFIX"] = self.package_folder
-        cmake.configure(build_folder=self.build_subfolder)
+        cmake.configure(build_folder=self._build_subfolder)
         cmake.build()
         cmake.install()
 
     def package(self):
-        self.copy(pattern="LICENSE", dst="license", src=self.source_subfolder)
+        self.copy(pattern="LICENSE", dst="license", src=self._source_subfolder)
 
     def package_info(self):
         self.cpp_info.libs =  tools.collect_libs(self)
