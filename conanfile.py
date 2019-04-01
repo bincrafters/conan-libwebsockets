@@ -24,7 +24,7 @@ class LibwebsocketsConan(ConanFile):
         "lws_with_ssl": [True, False]
     }
     default_options = {
-        'shared': True,
+        'shared': False,
         'lws_with_libuv': False,
         'lws_with_libevent': False,
         'lws_with_zlib': False,
