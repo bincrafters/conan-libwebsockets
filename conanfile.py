@@ -12,12 +12,15 @@ class LibwebsocketsConan(ConanFile):
     url = "https://github.com/bincrafters/conan-libwebsockets"
     homepage = "https://github.com/warmcat/libwebsockets"
     license = "LGPL-2.1"
+    author = "Bincrafters <bincrafters@gmail.com>"
+    topics = ("conan", "libwebsockets", "websocket")
     exports = "LICENSE.md"
     exports_sources = "CMakeLists.txt"
     settings = "os", "arch", "compiler", "build_type"
     generators = "cmake"
     options = {
         "shared": [True, False],
+        "fPIC": [True, False],
         "lws_with_libuv": [True, False],
         "lws_with_libevent": [True, False],
         "lws_with_zlib": [True, False],
@@ -25,14 +28,24 @@ class LibwebsocketsConan(ConanFile):
     }
     default_options = {
         'shared': False,
+        'fPIC': True,
         'lws_with_libuv': False,
         'lws_with_libevent': False,
         'lws_with_zlib': False,
         'lws_with_ssl': False
     }
 
-    _source_subfolder = "source_subfolder"
-    _build_subfolder = "build_subfolder"
+    @property
+    def _source_subfolder(self):
+        return "source_subfolder"
+
+    @property
+    def _build_subfolder(self):
+        return "build_subfolder"
+
+    def config_options(self):
+        if self.settings.os == "Windows":
+            del self.options.fPIC
 
     def configure(self):
         del self.settings.compiler.libcxx
@@ -43,16 +56,17 @@ class LibwebsocketsConan(ConanFile):
         if self.options.lws_with_libevent:
             self.requires.add("libevent/2.1.8@bincrafters/stable")
         if self.options.lws_with_zlib:
-            self.requires.add("zlib/>=1.2.11@conan/stable")
+            self.requires.add("zlib/1.2.11@conan/stable")
         if self.options.lws_with_ssl:
-            self.requires.add("OpenSSL/>=1.0.2r@conan/stable")
+            self.requires.add("OpenSSL/1.0.2s@conan/stable")
 
     def source(self):
-        tools.get("{0}/archive/v{1}.tar.gz".format(self.homepage, self.version))
+        sha256 = "0dc355c1f9a660b98667cc616fa4c4fe08dacdaeff2d5cc9f74e49e9d4af2d95"
+        tools.get("{0}/archive/v{1}.tar.gz".format(self.homepage, self.version), sha256=sha256)
         extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
 
-    def build(self):
+    def _configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["LWS_WITHOUT_TESTAPPS"] = True
         cmake.definitions["LWS_LINK_TESTAPPS_DYNAMIC"] = True
@@ -65,15 +79,18 @@ class LibwebsocketsConan(ConanFile):
         if not self.options.lws_with_zlib:
             cmake.definitions["LWS_WITHOUT_EXTENSIONS"] = True
             cmake.definitions["LWS_WITH_ZIP_FOPS"] = False
-        # zlib is required for extensions
-
-        cmake.definitions["CMAKE_INSTALL_PREFIX"] = self.package_folder
         cmake.configure(build_folder=self._build_subfolder)
+        return cmake
+
+    def build(self):
+        cmake = self._configure_cmake()
         cmake.build()
-        cmake.install()
 
     def package(self):
-        self.copy(pattern="LICENSE", dst="license", src=self._source_subfolder)
+        self.copy(pattern="LICENSE", dst="licenses", src=self._source_subfolder)
+        cmake = self._configure_cmake()
+        cmake.install()
+        tools.rmdir(os.path.join(self.package_folder, "share"))
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
