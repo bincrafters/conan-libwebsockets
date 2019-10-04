@@ -56,9 +56,9 @@ class LibwebsocketsConan(ConanFile):
         if self.options.lws_with_libevent:
             self.requires.add("libevent/2.1.8@bincrafters/stable")
         if self.options.lws_with_zlib:
-            self.requires.add("zlib/1.2.11@conan/stable")
+            self.requires.add("zlib/1.2.11")
         if self.options.lws_with_ssl:
-            self.requires.add("OpenSSL/1.0.2s@conan/stable")
+            self.requires.add("openssl/1.0.2t")
 
     def source(self):
         sha256 = "0dc355c1f9a660b98667cc616fa4c4fe08dacdaeff2d5cc9f74e49e9d4af2d95"
