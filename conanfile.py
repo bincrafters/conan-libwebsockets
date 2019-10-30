@@ -79,6 +79,10 @@ class LibwebsocketsConan(ConanFile):
         if not self.options.lws_with_zlib:
             cmake.definitions["LWS_WITHOUT_EXTENSIONS"] = True
             cmake.definitions["LWS_WITH_ZIP_FOPS"] = False
+            
+        if not self.options.shared and self.settings.os != "Windows":
+            cmake.definitions["LWS_STATIC_PIC"] = self.options.fPIC
+
         cmake.configure(build_folder=self._build_subfolder)
         return cmake
 
