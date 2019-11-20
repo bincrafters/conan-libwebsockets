@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 import os
 from conans import ConanFile, CMake, tools
 
@@ -12,7 +9,6 @@ class LibwebsocketsConan(ConanFile):
     url = "https://github.com/bincrafters/conan-libwebsockets"
     homepage = "https://github.com/warmcat/libwebsockets"
     license = "LGPL-2.1"
-    author = "Bincrafters <bincrafters@gmail.com>"
     topics = ("conan", "libwebsockets", "websocket")
     exports = "LICENSE.md"
     exports_sources = "CMakeLists.txt"
@@ -49,12 +45,13 @@ class LibwebsocketsConan(ConanFile):
 
     def configure(self):
         del self.settings.compiler.libcxx
+        del self.settings.compiler.cppstd
 
     def requirements(self):
         if self.options.lws_with_libuv:
             self.requires.add("libuv/1.15.0@bincrafters/stable")
         if self.options.lws_with_libevent:
-            self.requires.add("libevent/2.1.8@bincrafters/stable")
+            self.requires.add("libevent/2.1.11")
         if self.options.lws_with_zlib:
             self.requires.add("zlib/1.2.11")
         if self.options.lws_with_ssl:
