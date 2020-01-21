@@ -4,7 +4,7 @@ from conans import ConanFile, CMake, tools
 
 class LibwebsocketsConan(ConanFile):
     name = "libwebsockets"
-    version = "2.4.0"
+    version = "3.2.2"
     description = "Canonical libwebsockets.org websocket library"
     url = "https://github.com/bincrafters/conan-libwebsockets"
     homepage = "https://github.com/warmcat/libwebsockets"
@@ -58,7 +58,7 @@ class LibwebsocketsConan(ConanFile):
             self.requires.add("openssl/1.0.2u")
 
     def source(self):
-        sha256 = "0dc355c1f9a660b98667cc616fa4c4fe08dacdaeff2d5cc9f74e49e9d4af2d95"
+        sha256 = "166d6e17cab64bfc10c2a71799c298284540a1fa63f6ea3de5caccb34502243c"
         tools.get("{0}/archive/v{1}.tar.gz".format(self.homepage, self.version), sha256=sha256)
         extracted_dir = self.name + "-" + self.version
         os.rename(extracted_dir, self._source_subfolder)
@@ -76,7 +76,7 @@ class LibwebsocketsConan(ConanFile):
         if not self.options.lws_with_zlib:
             cmake.definitions["LWS_WITHOUT_EXTENSIONS"] = True
             cmake.definitions["LWS_WITH_ZIP_FOPS"] = False
-            
+
         if not self.options.shared and self.settings.os != "Windows":
             cmake.definitions["LWS_STATIC_PIC"] = self.options.fPIC
 
@@ -96,4 +96,6 @@ class LibwebsocketsConan(ConanFile):
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
         if self.settings.os == "Windows":
-            self.cpp_info.libs.append("ws2_32")
+            self.cpp_info.system_libs.append("ws2_32")
+        elif self.settings.os == "Linux":
+            self.cpp_info.system_libs.extend(["cap", "dl", "m"])
