@@ -49,7 +49,7 @@ class LibwebsocketsConan(ConanFile):
 
     def requirements(self):
         if self.options.lws_with_libuv:
-            self.requires.add("libuv/1.15.0@bincrafters/stable")
+            self.requires.add("libuv/1.34.2")
         if self.options.lws_with_libevent:
             self.requires.add("libevent/2.1.11")
         if self.options.lws_with_zlib:
